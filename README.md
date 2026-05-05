@@ -1,8 +1,6 @@
-# instant-Proparty-AI-Agent
-Instant Property AI Agent – A smart AI-powered real estate platform that allows users to buy, sell, and rent properties via WhatsApp, SMS, and web. Includes property listing, search, lead capture, payments, and commission-based system.
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Home, MapPin, DollarSign, Phone, CheckCircle, ArrowRight, MessageSquare, Building2, TrendingUp, Search } from 'lucide-react';
-
+ 
 // Sample property database
 const SAMPLE_PROPERTIES = [
   {
@@ -61,7 +59,7 @@ const SAMPLE_PROPERTIES = [
     premium: true
   }
 ];
-
+ 
 const InstantPropertyAI = () => {
   const [messages, setMessages] = useState([
     {
@@ -77,15 +75,15 @@ const InstantPropertyAI = () => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
-
+ 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
+ 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
+ 
   const searchProperties = (location, budget, type) => {
     let results = SAMPLE_PROPERTIES;
     
@@ -112,7 +110,7 @@ const InstantPropertyAI = () => {
     
     return results.slice(0, 5);
   };
-
+ 
   const formatPropertyList = (properties) => {
     if (properties.length === 0) {
       return "Sorry, no properties found matching your criteria. Let me suggest similar options or try different search parameters.";
@@ -136,20 +134,20 @@ const InstantPropertyAI = () => {
     
     return response;
   };
-
+ 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
-
+ 
     const userMessage = {
       role: 'user',
       content: inputMessage,
       timestamp: new Date()
     };
-
+ 
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
-
+ 
     try {
       // Handle special commands
       const lowerInput = inputMessage.toLowerCase();
@@ -186,33 +184,33 @@ const InstantPropertyAI = () => {
         setIsLoading(false);
         return;
       }
-
+ 
       // Call Claude API for intelligent responses
       const systemPrompt = `You are "Instant Property AI Agent" – a smart real estate assistant for a website in Hyderabad, India.
-
+ 
 CONTEXT: User is interacting with a real estate platform to BUY, SELL, or RENT properties.
-
+ 
 YOUR PERSONALITY:
 - Friendly, helpful, and professional
 - Use mix of Telugu words with English (e.g., "Chala baagundi!", "Super!", "Okay")
 - Keep responses SHORT and CONVERSATIONAL
 - Always guide step-by-step
 - End with a clear question or action
-
+ 
 USER FLOWS:
-
+ 
 🟢 BUYER FLOW:
 If user wants to buy/rent, collect:
 1. Location/Area (e.g., Kukatpally, Miyapur, Gachibowli)
 2. Budget (e.g., 50L, 1Cr)
 3. Property type (Plot/House/Flat)
 4. Size preference (optional)
-
+ 
 Then search and show properties using this format:
 "Here are properties in [Area]:
 [List 3-5 properties with ID, type, size, price]
 Type 'DETAILS P101' for full info"
-
+ 
 🔵 SELLER FLOW:
 If user wants to sell/list property, collect step-by-step:
 1. Owner Name
@@ -225,25 +223,25 @@ If user wants to sell/list property, collect step-by-step:
 8. Price
 9. Size & Facing
 10. Photos (ask them to upload)
-
+ 
 After collecting all info:
 "✅ Your property details are ready!
 💰 Listing Fee:
 ₹99 - Basic Listing
 ₹199 - Premium Listing (top visibility)
 Click PAY NOW to publish"
-
+ 
 🟡 SITE VISIT:
 If user wants to visit, collect:
 - Name
 - Phone
 - Preferred date
 Then confirm: "✅ Visit request submitted!"
-
+ 
 🔴 PROPERTY DETAILS:
 When user types "DETAILS P101":
 Show full property information and ask if they want to schedule visit.
-
+ 
 RULES:
 - Keep responses under 200 words
 - Never show owner phone number directly
@@ -251,15 +249,15 @@ RULES:
 - Use emojis strategically
 - Be conversational, not robotic
 - Guide them to next action
-
+ 
 CURRENT CONVERSATION CONTEXT:
 ${JSON.stringify(userContext)}
-
+ 
 Previous messages for context:
 ${messages.slice(-4).map(m => `${m.role}: ${m.content}`).join('\n')}
-
+ 
 Respond naturally to: "${inputMessage}"`;
-
+ 
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
@@ -274,19 +272,19 @@ Respond naturally to: "${inputMessage}"`;
           ],
         })
       });
-
+ 
       const data = await response.json();
       const assistantMessage = data.content
         .filter(item => item.type === "text")
         .map(item => item.text)
         .join("\n");
-
+ 
       const aiResponse = {
         role: 'assistant',
         content: assistantMessage,
         timestamp: new Date()
       };
-
+ 
       setMessages(prev => [...prev, aiResponse]);
       
       // Update context based on conversation
@@ -295,7 +293,7 @@ Respond naturally to: "${inputMessage}"`;
       } else if (lowerInput.includes('sell') || lowerInput.includes('list')) {
         setUserContext(prev => ({ ...prev, intent: 'seller' }));
       }
-
+ 
     } catch (error) {
       console.error('Error calling Claude API:', error);
       const errorResponse = {
@@ -308,12 +306,12 @@ Respond naturally to: "${inputMessage}"`;
       setIsLoading(false);
     }
   };
-
+ 
   const handleQuickAction = (action) => {
     setInputMessage(action);
     setTimeout(() => handleSendMessage(), 100);
   };
-
+ 
   const PropertyCard = ({ property }) => (
     <div className="bg-white rounded-lg border border-amber-100 p-4 hover:shadow-lg transition-shadow cursor-pointer"
          onClick={() => {
@@ -353,7 +351,7 @@ Respond naturally to: "${inputMessage}"`;
       </button>
     </div>
   );
-
+ 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
       {/* Header */}
@@ -383,7 +381,7 @@ Respond naturally to: "${inputMessage}"`;
           </div>
         </div>
       </header>
-
+ 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-6">
@@ -400,7 +398,7 @@ Respond naturally to: "${inputMessage}"`;
                 ))}
               </div>
             </div>
-
+ 
             {/* Quick Stats */}
             <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl p-5 text-white shadow-lg">
               <h3 className="font-bold mb-3">Platform Stats</h3>
@@ -420,7 +418,7 @@ Respond naturally to: "${inputMessage}"`;
               </div>
             </div>
           </div>
-
+ 
           {/* Center Panel - Chat Interface */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg border border-amber-100 overflow-hidden">
@@ -435,7 +433,7 @@ Respond naturally to: "${inputMessage}"`;
                 </div>
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               </div>
-
+ 
               {/* Messages Container */}
               <div 
                 ref={chatContainerRef}
@@ -477,7 +475,7 @@ Respond naturally to: "${inputMessage}"`;
                 
                 <div ref={messagesEndRef} />
               </div>
-
+ 
               {/* Quick Actions */}
               <div className="px-4 py-3 bg-amber-50/50 border-t border-amber-100">
                 <div className="flex flex-wrap gap-2">
@@ -507,7 +505,7 @@ Respond naturally to: "${inputMessage}"`;
                   </button>
                 </div>
               </div>
-
+ 
               {/* Input Area */}
               <div className="p-4 bg-white border-t border-amber-100">
                 <div className="flex gap-2">
@@ -533,7 +531,7 @@ Respond naturally to: "${inputMessage}"`;
           </div>
         </div>
       </div>
-
+ 
       {/* Property Detail Modal */}
       {showPropertyModal && selectedProperty && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowPropertyModal(false)}>
@@ -597,7 +595,7 @@ Respond naturally to: "${inputMessage}"`;
           </div>
         </div>
       )}
-
+ 
       {/* Footer */}
       <footer className="bg-white border-t border-amber-100 mt-12 py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -609,7 +607,7 @@ Respond naturally to: "${inputMessage}"`;
           </p>
         </div>
       </footer>
-
+ 
       <style jsx>{`
         @keyframes fadeIn {
           from {
@@ -629,5 +627,5 @@ Respond naturally to: "${inputMessage}"`;
     </div>
   );
 };
-
+ 
 export default InstantPropertyAI;
